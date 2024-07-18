@@ -1,0 +1,64 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    z-index: 1020;
+    width: 100%;
+}
+
+.header .container {
+    flex-grow: 1;
+    padding-left: 25px;
+}
+
+.header .title {
+    font-size: 24px;
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 20%;
+    margin-right: 20px;
+    padding-right: 20px;
+}
+
+.header .user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.header .user-info span {
+    font-size: 16px;
+}
+
+.header .logo {
+    width: 250px;
+    align-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.header .logo img {
+    width: 150px;
+    margin: 0 20px;
+}
+
+.header .logo button {
+    background: transparent;
+    border: transparent;
+    height: 100%;
+}
+
+.header .logo button img {
+    background: transparent;
+    border: transparent;
+    width: 30px;
+}
