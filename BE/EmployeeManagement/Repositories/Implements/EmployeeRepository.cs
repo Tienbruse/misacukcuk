@@ -75,13 +75,13 @@ public class EmployeeRepository : IEmployeeRepository
         }
 
         var parameters = new DynamicParameters();
-        parameters.Add("employeeId", Guid.NewGuid(), DbType.Guid);
+        parameters.Add("employeeId", request.EmployeeId, DbType.String);
         parameters.Add("fullName", request.FullName, DbType.String);
         parameters.Add("gender", request.Gender, DbType.Int32);
         parameters.Add("dob", request.Dob, DbType.DateTime);
         parameters.Add("email", request.Email, DbType.String);
         parameters.Add("address", request.Address, DbType.String);
-        parameters.Add("searchText", $"{id + 1} - {request.FullName}", DbType.String);
+        parameters.Add("searchText", $"{request.EmployeeId} - {request.FullName}", DbType.String);
         parameters.Add("identifierId", request.IdentifierId, DbType.String);
         parameters.Add("expireDate", request.ExpireDate, DbType.DateTime);
         parameters.Add("issuedBy", request.IssuedBy, DbType.Int32);
@@ -96,14 +96,14 @@ public class EmployeeRepository : IEmployeeRepository
         await connection.ExecuteAsync(query, parameters);
     }
 
-    public async Task Remove(Guid employeeId)
+    public async Task Remove(string employeeId)
     {
         var query = "DELETE FROM employee WHERE EmployeeId = @employeeId";
         using var connection = _context.CreateConnection();
         await connection.ExecuteAsync(query, new { employeeId });
     }
 
-    public async Task Update(Guid employeeId, UpdateEmployeeRequest request)
+    public async Task Update(string employeeId, UpdateEmployeeRequest request)
     {
         var query = @"UPDATE employee SET 
                         FullName = @fullName,
@@ -137,7 +137,7 @@ public class EmployeeRepository : IEmployeeRepository
         }
         
         var parameters = new DynamicParameters();
-        parameters.Add("employeeId", employeeId, DbType.Guid);
+        parameters.Add("employeeId", employeeId, DbType.String);
         parameters.Add("fullName", request.FullName, DbType.String);
         parameters.Add("gender", request.Gender, DbType.Int32);
         parameters.Add("dob", request.Dob, DbType.DateTime);
@@ -158,7 +158,7 @@ public class EmployeeRepository : IEmployeeRepository
         await connection.ExecuteAsync(query, parameters);
     }
 
-    public async Task<Employee?> GetEmployeeDetailByEmployeeId(Guid employeeId)
+    public async Task<Employee?> GetEmployeeDetailByEmployeeId(string employeeId)
     {
         var query = "SELECT * FROM employee WHERE EmployeeId = @employeeId";
         using var connection = _context.CreateConnection();
@@ -166,7 +166,7 @@ public class EmployeeRepository : IEmployeeRepository
         return employee;
     }
 
-    public async Task<List<Employee>> SearchEmployee(SearchEmployeesRequest request)
+    public async Task<ListEmployee> SearchEmployee(SearchEmployeesRequest request)
     {
         var query = "SELECT * FROM employee WHERE true";
         if (!string.IsNullOrEmpty(request.SearchText))
@@ -179,12 +179,23 @@ public class EmployeeRepository : IEmployeeRepository
         using var connection = _context.CreateConnection();
         var employees = await connection.QueryAsync<Employee>(query, parameters);
         employees = employees.Skip(request.Offset).Take(request.PageSize);
-        return employees.ToList();
+        
+        query = "SELECT count(*) FROM employee WHERE true";
+        if (!string.IsNullOrEmpty(request.SearchText))
+        {
+            query += " AND SearchText LIKE @searchText";
+        }
+        var total = await connection.QuerySingleAsync<int>(query, parameters);
+        return new ListEmployee
+        {
+            Total = total,
+            Employees = employees.ToList()
+        };
     }
 
     private async Task<Employee?> GetLatestEmployee()
     {
-        var query = "SELECT * FROM employee ORDER BY Id DESC";
+        var query = "SELECT * FROM employee ORDER BY Id DESC limit 1";
         using var connection = _context.CreateConnection();
         var employee = await connection.QuerySingleOrDefaultAsync<Employee>(query);
         return employee;

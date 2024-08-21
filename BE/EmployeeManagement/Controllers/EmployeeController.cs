@@ -39,9 +39,9 @@ public class EmployeeController : Controller
     }
 
     [HttpDelete]
-    public async Task<ApiResponse> Delete(Guid employeeId)
+    public async Task<ApiResponse> Delete(string employeeId)
     {
-        if (employeeId == Guid.Empty)
+        if (employeeId == "")
             return new ApiResponse
             {
                 Code = 500,
@@ -68,9 +68,9 @@ public class EmployeeController : Controller
     }
 
     [HttpPut]
-    public async Task<ApiResponse> Update([FromQuery] Guid employeeId, [FromBody] UpdateEmployeeRequest request)
+    public async Task<ApiResponse> Update([FromQuery] string employeeId, [FromBody] UpdateEmployeeRequest request)
     {
-        if (employeeId == Guid.Empty)
+        if (employeeId == "")
             return new ApiResponse
             {
                 Code = 500,
@@ -96,9 +96,9 @@ public class EmployeeController : Controller
     }
 
     [HttpGet]
-    public async Task<ApiResponse> GetEmployeeDetailById(Guid employeeId)
+    public async Task<ApiResponse> GetEmployeeDetailById(string employeeId)
     {
-        if (employeeId == Guid.Empty)
+        if (employeeId == "")
             return new ApiResponse
             {
                 Code = 500,
@@ -136,12 +136,6 @@ public class EmployeeController : Controller
         try
         {
             var response = await _employeeRepository.SearchEmployee(request);
-            if (response.Count == 0)
-                return new ApiResponse
-                {
-                    Code = 404,
-                    Message = "Object not found!"
-                };
             return new ApiResponse
             {
                 Code = 200,
