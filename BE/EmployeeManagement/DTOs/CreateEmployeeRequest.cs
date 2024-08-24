@@ -5,7 +5,9 @@ namespace EmployeeManagement.DTOs;
 
 public class CreateEmployeeRequest
 {
-    [Required(ErrorMessage = "Full Name is required!")]
+    [Required(ErrorMessage = "Full Name and EmployeeId is required!")]
+    public string? EmployeeId { get; set; } = "NV-unknown";
+
     public required string FullName { get; set; }
 
     public GenderEnum? Gender { get; set; } = GenderEnum.Male;

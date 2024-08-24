@@ -7,11 +7,11 @@ public interface IEmployeeRepository
 {
     Task Create(CreateEmployeeRequest request);
 
-    Task Remove(Guid employeeId);
+    Task Remove(string employeeId);
 
-    Task Update(Guid employeeId, UpdateEmployeeRequest request);
+    Task Update(string employeeId, UpdateEmployeeRequest request);
 
-    Task<Employee?> GetEmployeeDetailByEmployeeId(Guid employeeId);
+    Task<Employee?> GetEmployeeDetailByEmployeeId(string employeeId);
 
-    Task<List<Employee>> SearchEmployee(SearchEmployeesRequest request);
+    Task<ListEmployee> SearchEmployee(SearchEmployeesRequest request);
 }
